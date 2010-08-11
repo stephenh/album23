@@ -1,6 +1,7 @@
 #!/usr/bin/ruby
 
 require 'rubygems'
+gem 'flickraw', '= 0.8.2'
 require 'flickraw'
 require 'sqlite3'
 require 'rio'
