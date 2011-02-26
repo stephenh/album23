@@ -1,8 +1,7 @@
 #!/usr/bin/ruby
 
 require 'rubygems'
-gem 'flickraw', '= 0.8.2'
-require 'flickraw'
+require 'flickraw.rb'
 require 'sqlite3'
 require 'rio'
 require 'mini_exiftool'
@@ -49,7 +48,7 @@ rio('/home/stephen/Pictures/Photos').all.files.each do |file|
     if count == '0' then
       puts "Uploading #{path} #{tags}"
       p = flickr.upload_photo path, :tags => tags, :email => email, :password => password, :is_public => 1, :hidden => 2
-      # db.execute 'INSERT INTO photos (id, date_taken) VALUES (?, ?)', p, date_taken
+      db.execute 'INSERT INTO photos (id, date_taken) VALUES (?, ?)', p, date_taken
     end
   end
 end
