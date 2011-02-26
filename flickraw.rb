@@ -48,7 +48,6 @@ module FlickRaw
 
   class Response
     def self.build(h, type) # :nodoc:
-      puts "NEW RESPONSE h = #{h} type = #{type}"
       if type =~ /s$/ and (a = h[$`]).is_a? Array
         ResponseList.new(h, type, a.collect {|e| Response.build(e, $`)})
       elsif h.keys == ["_content"]
@@ -164,8 +163,6 @@ module FlickRaw
         http.request(request)
       end
 
-      puts "CODE = #{http_response.code}"
-
       json = JSON.load(http_response.body.empty? ? "{}" : http_response.body)
       raise FailedResponse.new(json['message'], json['code'], req) if json.delete('stat') == 'fail'
       type, json = json.to_a.first if json.size == 1 and json.all? {|k,v| v.is_a? Hash}
@@ -233,19 +230,17 @@ module FlickRaw
         "--#{boundary}--"
 
       http_response = open_flickr {|http| http.post(method, query, header) }
-      puts "UPLOAD CODE #{http_response.code}"
-      puts "UPLOAD BODY #{http_response.body}"
       xml = http_response.body
-      if xml[/stat="(\w+)"/, 1] == 'fail'
-        msg = xml[/msg="([^"]+)"/, 1]
-        code = xml[/code="([^"]+)"/, 1]
+      if xml[/"stat":"(\w+)"/, 1] == 'fail'
+        msg = xml[/"message":"([^"]+)"/, 1]
+        code = xml[/"code":([0-9]+)/, 1]
         raise FailedResponse.new(msg, code, 'flickr.upload')
       end
       type = xml[/<(\w+)/, 1]
       h = {
         "secret" => xml[/secret="([^"]+)"/, 1],
         "originalsecret" => xml[/originalsecret="([^"]+)"/, 1],
-        "_content" => xml[/>([^<]+)<\//, 1]
+        "_content" => xml[/"_content":([0-9]+)/, 1]
       }.delete_if {|k,v| v.nil? }
       Response.build(h, type)
     end
