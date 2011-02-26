@@ -19,12 +19,11 @@ db = SQLite3::Database.new('sync.db')
 files = []
 ['Photos', '2010', '2011'].each do |d|
   rio("/home/stephen/Pictures/#{d}").all.files.each do |file|
-    files << file
+    files << file.path
   end
 end
 
-files.sort.each do |file|
-  path = file.path
+files.sort.each do |path|
   is_modified = path.include? '(Modified)'
   has_modified = (!is_modified) && File.exists?(path.gsub('.', ' (Modified).'))
   if is_modified or !has_modified then
