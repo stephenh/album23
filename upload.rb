@@ -23,7 +23,7 @@ files = []
   end
 end
 
-files.each do |file|
+files.sort.each do |file|
   path = file.path
   is_modified = path.include? '(Modified)'
   has_modified = (!is_modified) && File.exists?(path.gsub('.', ' (Modified).'))
