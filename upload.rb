@@ -16,7 +16,14 @@ user_id = flickr.test.login(:email => email, :password => password)['id']
 
 db = SQLite3::Database.new('sync.db')
 
-rio('/home/stephen/Pictures/Photos').all.files.each do |file|
+files = []
+['Photos', '2010', '2011'].each do |d|
+  rio("/home/stephen/Pictures/#{d}").all.files.each do |file|
+    files << file
+  end
+end
+
+files.each do |file|
   path = file.path
   is_modified = path.include? '(Modified)'
   has_modified = (!is_modified) && File.exists?(path.gsub('.', ' (Modified).'))
