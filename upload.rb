@@ -59,7 +59,8 @@ files.sort.each do |path|
       db.execute 'INSERT INTO photos (id, date_taken) VALUES (?, ?)', photos[0]['id'], date_taken
     else
       puts "Uploading #{path} #{tags}"
-      p = flickr.upload_photo path, :title => title, :tags => tags, :email => email, :password => password, :is_public => 1, :hidden => 2
+      is_public = tags.include?("private") ? 0 : 1
+      p = flickr.upload_photo path, :title => title, :tags => tags, :email => email, :password => password, :is_public => is_public, :hidden => 2
       db.execute 'INSERT INTO photos (id, date_taken) VALUES (?, ?)', p, date_taken
     end
   end
