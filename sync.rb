@@ -38,7 +38,7 @@ while true do
                                )
   photos.each do |photo|
     count = db.get_first_value('SELECT count(*) FROM photos WHERE id = ?', photo['id'])
-    if count == '0' then
+    if count == 0 then
       db.execute(
                 'INSERT INTO photos (id, date_taken, path) VALUES (?, ?, null);',
                 photo['id'],
