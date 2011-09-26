@@ -33,6 +33,11 @@ files.sort.each do |path|
     date_taken = exif['DateTimeOriginal'].strftime '%Y-%m-%d %H:%M:%S'
     tags = exif['Subject'].to_a.join ' '
 
+    # Skip any photos without tags (pending review)
+    if tags == '' then
+      next
+    end
+
     # Does our database think we've uploaded this before?
     count = db.get_first_value('SELECT count(*) FROM photos WHERE date_taken = ?', date_taken)
     if count > 0 then
