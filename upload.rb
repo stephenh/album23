@@ -32,9 +32,11 @@ files.sort.each do |path|
     exif = MiniExiftool.new path
     date_taken = exif['DateTimeOriginal'].strftime '%Y-%m-%d %H:%M:%S'
     tags = exif['Subject'].to_a.join ' '
+    title = exif['Title'] # if nil, just ignored
 
     # Skip any photos without tags (pending review)
     if tags == '' then
+      puts "No tags on #{path}"
       next
     end
 
@@ -57,7 +59,7 @@ files.sort.each do |path|
       db.execute 'INSERT INTO photos (id, date_taken) VALUES (?, ?)', photos[0]['id'], date_taken
     else
       puts "Uploading #{path} #{tags}"
-      p = flickr.upload_photo path, :tags => tags, :email => email, :password => password, :is_public => 1, :hidden => 2
+      p = flickr.upload_photo path, :title => title, :tags => tags, :email => email, :password => password, :is_public => 1, :hidden => 2
       db.execute 'INSERT INTO photos (id, date_taken) VALUES (?, ?)', p, date_taken
     end
   end

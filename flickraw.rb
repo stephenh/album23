@@ -215,10 +215,12 @@ module FlickRaw
 
       file = file.to_s.encode("utf-8").force_encoding("ascii-8bit") if RUBY_VERSION >= "1.9"
       build_args(args).each { |a, v|
-        query <<
-          "--#{boundary}\r\n" <<
-          "Content-Disposition: form-data; name=\"#{a}\"\r\n\r\n" <<
-          "#{v}\r\n"
+        if v != nil then
+          query <<
+            "--#{boundary}\r\n" <<
+            "Content-Disposition: form-data; name=\"#{a}\"\r\n\r\n" <<
+            "#{v}\r\n"
+        end
       }
       query <<
         "--#{boundary}\r\n" <<
